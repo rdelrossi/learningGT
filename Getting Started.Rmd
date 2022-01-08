@@ -1,0 +1,19 @@
+---
+title: "Getting Started"
+author: "R DelRossi"
+date: "1/8/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(gt)
+library(tidyverse)
+```
+
+## Creating Tables with gt
+
+The `gt` package is a powerful way to create presentation-quality tables from your R data. Getting started is incredibly easy, but once you have an initial table, it's also easy to add sophisticated table features.
+
+To get started, be sure you have installed the `gt` package and loaded it with `library(gt)`. In this document, I also loaded the `tidyverse` metapackage, which adds a variety of capabilities to our arsenal.
