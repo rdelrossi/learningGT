@@ -14,24 +14,36 @@ library(tidyverse)
 
 ## What is gt?
 
-The `gt` package is a powerful way to create presentation-quality tables from your R data. Getting started is incredibly easy, but once you have an initial table, it's also easy to add sophisticated table features.
+The `gt` package is a powerful way to create presentation-quality tables from your R data. Getting started is incredibly easy, but once you have an initial table, it's also easy to add more sophisticated table features.
 
-To get started, be sure you have installed the `gt` package and loaded it with `library(gt)`. In this document, I also loaded the `tidyverse` metapackage, which adds a variety of capabilities to our arsenal.
+To get started, install the `gt` package with `install.packages("gt")` and load it with `library(gt)`. In this document, I also loaded the `tidyverse` metapackage, which adds a variety of libraries with many additional capabilities to our arsenal. You don't need the `tidyverse` to use `gt`, however.
 
 ## Creating Tables with gt
 
-A highly appealing characteristic of `gt` is its ability to make a simple table with minimal of effort.
+A highly appealing characteristic of `gt` is its ability to make a simple table with minimal of effort. Simply pipe a data.frame, such as the same `mtcars` into the main `gt` function, which is also called `gt()`.
 
 ```{r}
 mtcars %>% head() %>% gt()
 ```
+
+Since `mtcars` makes use of R's support of row names, we can tell `gt` to use those row names as a table stub using the `rownames_to_stub` argument.
+
+```{r}
+mtcars %>% head() %>% gt(rownames_to_stub = TRUE)
+```
+
+The stub is just one of many parts of a `gt` table that you can control. This diagram shows the other major sections of a table. In the package there are functions that target these sections specifically.
+
+![](images/gt_parts_of_a_table.svg){width="910"}
+
+There are several other arguments to gt() that you can learn more about at [the package's web site](https://gt.rstudio.com/reference/gt.html).
 
 The result of the call to `gt()` is a `gt_tbl` object that can be saved to a variable and refined with additional calls to functions it the `gt` package. This ability to save the table in specific states can be especially useful when making decisions about the table's appearance that are based on conditional logic.
 
 For instance, in this next example I save the initial table to the variable `tbl` and then set the table's title to a value that's based on some simple conditional logic.
 
 ```{r}
-tbl <- mtcars %>% head() %>% gt()
+tbl <- mtcars %>% head() %>% gt(rownames_to_stub = TRUE)
 
 if (ncol(mtcars) > 10) {
   tbl <- tbl %>% 
@@ -42,4 +54,36 @@ if (ncol(mtcars) > 10) {
 }
 
 tbl
+```
+
+`gt` tables are conversant with the data manipulation capabilities of the `dplyr` package (the dplyr package available in this analysis because I loaded the `tidyverse` earlier). For example, if I group the data, `gt` will respect the grouping in its output.
+
+```{r}
+mtcars %>% dplyr::group_by(gear, am) %>% gt()
+```
+
+The headings of columns in a `gt` table are, by default, the data.frame variable names. Often, though, these names will be difficult to interpret by the table consumer. It's easy to change column names, however, with the `cols_label` function.
+
+```{r}
+mtcars[1:3, c("mpg", "cyl", "hp", "wt")] %>% 
+  gt(rownames_to_stub = TRUE) %>% 
+  cols_label(
+    mpg = "Miles/Gallon",
+    cyl = "Cylinders",
+    hp = "Horsepower", 
+    wt = "Weight"
+  )
+```
+
+With the help of some utility functions we can format the column headings with HTML or Markdown syntax.
+
+```{r}
+mtcars[1:3, c("mpg", "cyl", "hp", "wt")] %>% 
+  gt(rownames_to_stub = TRUE) %>% 
+  cols_label(
+    mpg = html("<strong>Miles/<br/>Gallon</strong>"),
+    cyl = md("**Cylinders**"),
+    hp = md("**Horsepower**"), 
+    wt = md("**Weight**")
+  )
 ```
